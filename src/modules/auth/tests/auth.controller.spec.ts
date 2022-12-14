@@ -8,7 +8,7 @@ import * as supertest from "supertest";
 import { setupServer } from "server/server";
 import { disconnectAndClearDatabase } from "helpers/utils";
 import { LoginUserDto } from "../dto/login-user.dto";
-import { AccessToken } from "../entities/access-token.entity";
+import { SuccessResponse } from "helpers/success-response";
 
 describe("AuthController", () => {
   let app: Express;
@@ -39,36 +39,34 @@ describe("AuthController", () => {
 
   describe("POST /auth", () => {
     const createUser = async (userDto: CreateUserDto) => usersService.createUser(userDto);
-    const loginDto: LoginUserDto = { email: "user@test.com", password: "password" };
+    const userData: CreateUserDto = { email: "user@test.com", password: "password", address: "Euless" };
+    const loginDto: LoginUserDto = { email: userData.email, password: userData.password };
 
     it("should login existing user", async () => {
-      await createUser(loginDto);
+      await createUser(userData);
 
-      const res = await agent.post("/api/auth/login").send(loginDto);
-      const { token } = res.body as AccessToken;
-
-      expect(res.statusCode).toBe(201);
-      expect(token).toBeDefined();
+      const res = await agent.post("/api/v1/auth/login").send(loginDto);
+      const { data } = res.body as SuccessResponse;
+      expect(res.statusCode).toBe(200);
+      expect((data as { token: string }).token).toBeDefined();
     });
 
-    it("should throw UnprocessableEntityError when user logs in with invalid email", async () => {
-      const res = await agent.post("/api/auth/login").send({ email: "invalidEmail", password: "pwd" });
+    it("should throw BadRequestError when user logs in with invalid email", async () => {
+      const res = await agent.post("/api/v1/auth/login").send({ email: "invalidEmail", password: "pwd" });
 
-      expect(res.statusCode).toBe(422);
+      expect(res.statusCode).toBe(400);
       expect(res.body).toMatchObject({
-        name: "UnprocessableEntityError",
-        message: "Invalid user email or password",
+        message: "Bad Request",
       });
     });
 
-    it("should throw UnprocessableEntityError when user logs in with invalid password", async () => {
-      await createUser(loginDto);
+    it("should throw NotAuthorizedError when user logs in with invalid password", async () => {
+      await createUser(userData);
 
-      const res = await agent.post("/api/auth/login").send({ email: loginDto.email, password: "invalidPassword" });
+      const res = await agent.post("/api/v1/auth/login").send({ email: loginDto.email, password: "invalidPassword" });
 
-      expect(res.statusCode).toBe(422);
+      expect(res.statusCode).toBe(401);
       expect(res.body).toMatchObject({
-        name: "UnprocessableEntityError",
         message: "Invalid user email or password",
       });
     });

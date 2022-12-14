@@ -1,10 +1,11 @@
 import * as bcrypt from "bcrypt";
 import config from "config/config";
-import { UnprocessableEntityError } from "errors/errors";
 import { DeepPartial, FindOptionsWhere, Repository } from "typeorm";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { User } from "./entities/user.entity";
 import dataSource from "orm/orm.config";
+import { GoogleMapsClient } from "helpers/google-maps";
+import { BadRequestError } from "errors/bad-request.error";
 
 export class UsersService {
   private readonly usersRepository: Repository<User>;
@@ -14,14 +15,16 @@ export class UsersService {
   }
 
   public async createUser(data: CreateUserDto): Promise<User> {
-    const { email, password } = data;
+    const { email, password, ...rest } = data;
 
-    const existingUser = await this.findOneBy({ email: email });
-    if (existingUser) throw new UnprocessableEntityError("A user for the email already exists");
+    const existingUser = await this.findOneBy({ email });
+    if (existingUser) throw new BadRequestError("A user for the email already exists");
 
     const hashedPassword = await this.hashPassword(password);
 
-    const userData: DeepPartial<User> = { email, hashedPassword };
+    const coordinates = await GoogleMapsClient.getCoordinates(data.address);
+
+    const userData: DeepPartial<User> = { hashedPassword, email, ...rest, coordinates };
 
     const newUser = this.usersRepository.create(userData);
     return this.usersRepository.save(newUser);

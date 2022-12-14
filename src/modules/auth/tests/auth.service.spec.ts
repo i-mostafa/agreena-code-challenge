@@ -1,5 +1,4 @@
 import config from "config/config";
-import { UnprocessableEntityError } from "errors/errors";
 import { Express } from "express";
 import { setupServer } from "server/server";
 import { disconnectAndClearDatabase } from "helpers/utils";
@@ -9,6 +8,7 @@ import ds from "orm/orm.config";
 import { AuthService } from "../auth.service";
 import { LoginUserDto } from "../dto/login-user.dto";
 import http, { Server } from "http";
+import { NotAuthorizedError } from "errors/not-authorized.error";
 
 describe("AuthService", () => {
   let app: Express;
@@ -37,29 +37,30 @@ describe("AuthService", () => {
   });
 
   describe(".login", () => {
+    const userData: CreateUserDto = { email: "user@test.com", password: "password", address: "Euless" };
     const loginDto: LoginUserDto = { email: "user@test.com", password: "password" };
     const createUser = async (userDto: CreateUserDto) => usersService.createUser(userDto);
 
     it("should create access token for existing user", async () => {
-      await createUser(loginDto);
+      await createUser(userData);
 
       const { token } = await authService.login(loginDto);
 
       expect(token).toBeDefined();
     });
 
-    it("should throw UnprocessableEntityError when user logs in with invalid email", async () => {
-      await authService.login({ email: "invalidEmail", password: "pwd" }).catch((error: UnprocessableEntityError) => {
-        expect(error).toBeInstanceOf(UnprocessableEntityError);
+    it("should throw ValidationError when user logs in with invalid email", async () => {
+      await authService.login({ email: "invalidEmail", password: "pwd" }).catch((error: NotAuthorizedError) => {
+        expect(error).toBeInstanceOf(NotAuthorizedError);
         expect(error.message).toBe("Invalid user email or password");
       });
     });
 
-    it("should throw UnprocessableEntityError when user logs in with invalid password", async () => {
-      await createUser(loginDto);
+    it("should throw NotAuthorizedError when user logs in with invalid password", async () => {
+      await createUser(userData);
 
-      await authService.login({ email: loginDto.email, password: "invalidPassword" }).catch((error: UnprocessableEntityError) => {
-        expect(error).toBeInstanceOf(UnprocessableEntityError);
+      await authService.login({ email: loginDto.email, password: "invalidPassword" }).catch((error: NotAuthorizedError) => {
+        expect(error).toBeInstanceOf(NotAuthorizedError);
         expect(error.message).toBe("Invalid user email or password");
       });
     });
