@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString, Max, Min } from "class-validator";
 
 export class EnvironmentVariables {
   @IsString()
@@ -37,11 +37,25 @@ export class EnvironmentVariables {
   @IsNotEmpty()
   public SALT_ROUNDS: number;
 
+  @IsNumber()
+  @IsNotEmpty()
+  public GOOGLE_MAPS_DISTANCE_MATRIX_LIMIT: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @Min(0)
+  @Max(100)
+  public OUTLIERS_PERCENTAGE: number;
+
   @IsString()
   @IsNotEmpty()
   public JWT_SECRET: string;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  public JWT_EXPIRES_AT: number;
+  public JWT_EXPIRES_AT: string;
+
+  @IsString()
+  @IsNotEmpty()
+  public GOOGLE_MAPS_API_KEY: string;
 }
