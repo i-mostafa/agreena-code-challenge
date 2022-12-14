@@ -1,4 +1,7 @@
+/* eslint-disable no-unused-vars */
 import { NextFunction, Request, Response } from "express";
+import { EndPoint } from "helpers/end-point.decorator";
+import { SuccessStatusCodes } from "helpers/enums";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UsersService } from "./users.service";
 
@@ -8,13 +11,9 @@ export class UsersController {
   constructor() {
     this.usersService = new UsersService();
   }
-
-  public async create(req: Request, res: Response, next: NextFunction) {
-    try {
-      const user = await this.usersService.createUser(req.body as CreateUserDto);
-      res.status(201).send(user);
-    } catch (error) {
-      next(error);
-    }
+  @EndPoint(SuccessStatusCodes.CREATED)
+  public async create(req: Request, _res: Response, _next: NextFunction) {
+    const user = await this.usersService.createUser(req.body as CreateUserDto);
+    return user;
   }
 }
