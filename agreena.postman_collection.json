@@ -1,0 +1,274 @@
+{
+	"info": {
+		"_postman_id": "1f3edef6-f8cc-42cd-b5b5-4a5af7d25b1d",
+		"name": "agreena",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14837775"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									"var token = responseJson.token;\r",
+									"if(token) pm.environment.set(\"TOKEN\", token)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"islam@me.com\",\r\n    \"password\": \"12345678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API}}/auth/login",
+							"host": [
+								"{{API}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									"var token = responseJson.token;\r",
+									"if(token) pm.environment.set(\"TOKEN\", token)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"email\": \"islam@me.com\",\r\n    \"password\": \"12345678\",\r\n    \"address\":\"Round Rock, TX, USA\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API}}/auth/register",
+							"host": [
+								"{{API}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "farms",
+			"item": [
+				{
+					"name": "Create Farm",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"test\",\r\n    \"address\":\"taha shobra, quesna\",\r\n    \"yield\":2.3,\r\n    \"size\":4.6\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API}}/farms",
+							"host": [
+								"{{API}}"
+							],
+							"path": [
+								"farms"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update Farm",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n \r\n    \"yield\":2.3,\r\n\r\n    \"address\":\"meet elezz\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API}}/farms/6d3b6434-b8d1-4e45-b9a1-25413db9280b",
+							"host": [
+								"{{API}}"
+							],
+							"path": [
+								"farms",
+								"6d3b6434-b8d1-4e45-b9a1-25413db9280b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get farm by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API}}/farms/6c86ea17-33c5-4f74-a34f-2496bfb1fe82",
+							"host": [
+								"{{API}}"
+							],
+							"path": [
+								"farms",
+								"6c86ea17-33c5-4f74-a34f-2496bfb1fe82"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all farms",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API}}/farms?__sort=drivingDistance&__outliers=true",
+							"host": [
+								"{{API}}"
+							],
+							"path": [
+								"farms"
+							],
+							"query": [
+								{
+									"key": "__sort",
+									"value": "drivingDistance"
+								},
+								{
+									"key": "__outliers",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete farm by id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API}}/farms/f99a2807-6a7e-4f25-8c06-5a81e6b2fcbf",
+							"host": [
+								"{{API}}"
+							],
+							"path": [
+								"farms",
+								"f99a2807-6a7e-4f25-8c06-5a81e6b2fcbf"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "is Online",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{TOKEN}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
