@@ -15,3 +15,4 @@
 - For dev environment Run `npm run dev`.
 - You can find a postman collection in the root dir `agreena.postman_collection.json`
 - And also can access it from [Agreena collection](https://documenter.getpostman.com/view/14837775/2s8YzWSg5w)
+- I added a simple cache system to distance matrix api to fix the req delay. we can overcome this problem by adding **_pagination_** or **_subscribe_** for a higher plan in google maps Api
