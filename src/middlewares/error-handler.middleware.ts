@@ -1,14 +1,13 @@
-import { UnprocessableEntityError } from "errors/errors";
+import { AppError } from "errors/app.error";
+import { InternalServerError } from "errors/internal-server.error";
 import { NextFunction, Request, Response } from "express";
 
-export function handleErrorMiddleware(error: Error, _: Request, res: Response, next: NextFunction): void {
-  const { message } = error;
-
-  if (error instanceof UnprocessableEntityError) {
-    res.status(422).send({ name: "UnprocessableEntityError", message });
-  } else {
-    res.status(500).send({ message: "Internal Server Error" });
+// eslint-disable-next-line no-unused-vars
+export function handleErrorMiddleware(error: Error | AppError, _: Request, res: Response, _next: NextFunction): void {
+  if (!(error instanceof AppError)) {
+    console.log({ ...error });
+    error = new InternalServerError();
   }
-
-  next();
+  const { message, statusCode, ...rest } = error as AppError;
+  res.status(statusCode).json({ message, statusCode, ...rest });
 }
