@@ -8,6 +8,10 @@ export function setupServer(): Express {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
+  app.get("/", authGuard, (_, res: Response) => {
+    res.send(`Listening on: ${config.APP_HOST}:${config.APP_PORT}`);
+  });
+
   app.use("/api", routes);
   app.use(handleErrorMiddleware);
 

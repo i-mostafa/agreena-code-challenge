@@ -1,6 +1,6 @@
 import config from "config/config";
-import { Response } from "express";
 import http from "http";
+
 import dataSource from "orm/orm.config";
 import { setupServer } from "./server/server";
 
@@ -10,12 +10,8 @@ async function bootstrap(): Promise<http.Server> {
   await dataSource.initialize();
   const port = config.APP_PORT;
 
-  app.get("/", (_, res: Response) => {
-    res.send(`Listening on port: ${port}`);
-  });
-
   const server = http.createServer(app);
-  server.listen(port);
+  server.listen(port, () => console.log(`Server is running on http://localhost:${port}`));
 
   return server;
 }
