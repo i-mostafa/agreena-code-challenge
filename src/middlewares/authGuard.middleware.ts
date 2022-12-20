@@ -1,7 +1,8 @@
+import config from "config/config";
 import { fromUnixTime } from "date-fns";
 import { NotAuthorizedError } from "errors/not-authorized.error";
 import { NextFunction, Request, Response } from "express";
-import { decode } from "jsonwebtoken";
+import { verify, JwtPayload } from "jsonwebtoken";
 import { User } from "modules/users/entities/user.entity";
 
 export function authGuard(req: Request, _: Response, next: NextFunction): void {
@@ -10,8 +11,13 @@ export function authGuard(req: Request, _: Response, next: NextFunction): void {
 
   const token = authorizationHeader.split(" ")[1];
   if (!token) return next(new NotAuthorizedError());
+  let decoded: string | JwtPayload;
+  try {
+    decoded = verify(token, config.JWT_SECRET);
+  } catch (e) {
+    return next(new NotAuthorizedError());
+  }
 
-  const decoded = decode(token);
   if (!decoded) return next(new NotAuthorizedError());
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
