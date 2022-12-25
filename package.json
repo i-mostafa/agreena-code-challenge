@@ -74,6 +74,9 @@
     "modulePaths": [
       "<rootDir>",
       "/src/modules"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/__test__/setup.ts"
     ]
   }
 }
